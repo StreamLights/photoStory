@@ -10,20 +10,17 @@ const webpackHotMiddleware = koaWebpackMiddleware.hotMiddleware;
 const app = new Koa();
 
 var compile = webpack(webpackConfig);
-
-app.use(webpackDevMiddleware(compile,{
-        // display nothing to the console 
-        quiet: false,
-        // watch options (only lazy: false) 
-        watchOptions: {
-            aggregateTimeout: 300,
-            poll: true
-        }
+app.use(webpackDevMiddleware(compile, {
+    // display nothing to the console 
+    quiet: false,
+    // watch options (only lazy: false) 
+    watchOptions: {
+        aggregateTimeout: 300,
+        poll: true
+    }
 }));
-
 app.use(webpackHotMiddleware(compile));
-
-
 // 在端口3000监听:
-app.listen(3000);
-console.log('photoStoryApp started at port 3000...');
+app.listen(3000, function () {
+    console.log('photoStoryApp started at port 3000...');
+});
