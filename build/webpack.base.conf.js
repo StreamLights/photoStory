@@ -44,7 +44,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'index.html',
-            inject: true
+            inject: true,
+            favicon: 'favicon.ico'
         }),
         new webpack.optimize.OccurrenceOrderPlugin(), // 用途：排序输出 通过模块调用次数给模块分配ids，常用的ids就会分配更短的id，使ids可预测，减小文件大小，推荐使用
         new webpack.HotModuleReplacementPlugin(),  //启用热替换模块(Hot Module Replacement)，也被称为 HMR。W> 永远不要在生产环境(production)下启用 HMR

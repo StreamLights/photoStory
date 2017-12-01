@@ -2,7 +2,7 @@
     <div class="mask">
         <div class="close" @click="closeMyself"></div>
         <div class="warmCat"></div>
-        <form class="registerArea">
+        <form class="loginArea">
             <span class="tag">用户名：</span>
             <div class="wrapText">
                 <input type="text" class="username" v-model="username">
@@ -11,7 +11,7 @@
             <div class="wrapText">
                 <input type="password" class="password" v-model="password">
             </div>
-            <div class="register" @click="register">注册</div>   
+            <div class="register" @click="login">登陆</div>   
         </form>
         <transition name="fade">
             <div v-if="isShowMes" class="showMessage">{{regMes}}</div>
@@ -30,18 +30,19 @@
             }
         },
         methods: {
-            register: function() {
+            login: function() {
                 let _this = this;
                 axios({
                     method: 'post',
-                    url: '/api/user/register',
+                    url: 'http://localhost:3001/user/login',
                     data: {
                         username: this.username,
                         password: this.password
-                    }
+                    },
+                    withCredentials: true           // 设置withCredentials,否则即使服务器同意发送Cookie，浏览器也不会发送。或者，服务器要求设置Cookie，浏览器也不会处理。
                 })
                 .then(function(response) {
-                    if(response.data && response.data.status === 1){
+                    if(response.data && response.data.status === 1) {
                         _this.isShowMes = true;
                         setTimeout(function() {
                             _this.isShowMes = false;
@@ -49,14 +50,15 @@
                         _this.regMes = response.data.msg;
                         return;
                     }
-                    this.$emit('closeRegister');
+                    sessionStorage.setItem("wc_username", _this.username);
+                    _this.$emit('closeLogin', _this.username);
                 })
                 .catch(function(err) {
                     console.log(err);
                 });
             },
             closeMyself: function() {
-                this.$emit('closeRegister');
+                this.$emit('closeLogin');
             }
         }
     }
@@ -85,7 +87,7 @@
         background: url('../assets/close.png');
         background-size: 100% 100%;
     }
-    .registerArea {
+    .loginArea {
         margin-top: 50px;
     }
     .tag {

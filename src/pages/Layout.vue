@@ -1,15 +1,16 @@
 <template>
     <div>
         <router-view></router-view>
+        <div class="block"></div>
         <div class="bottomBar">
-            <div class="leftItem">
+            <div class="leftItem" @click="goIndex">
                 <i class="icon leftIcon"></i><span class="itemTag">首页</span>
             </div>
-            <div class="middleItem">
+            <div class="middleItem" @click="goPostArticle">
                 <i class="icon middleIcon"></i>
                 <span class="itemTag">发布</span>
             </div>
-            <div class="rightItem">
+            <div class="rightItem" @click="goUser">
                 <i class="icon rightIcon"></i>
                 <span class="itemTag">用户</span>
             </div>
@@ -17,16 +18,40 @@
     </div>
 </template>
 <script>
+    export default {
+        methods: {
+            goIndex() {
+               this.$router.push({
+                   path: '/'
+               });
+            },
+            goPostArticle() {
+                this.$router.push({
+                    path: 'postArticle'
+                });
+            },
+            goUser() {
+                this.$router.push({
+                    path: 'userinfo'
+                });
+            }
+        }
+    }
 </script>
 <style>
     body {
         padding: 0;
         margin: 0;
-        background-color: #f3f4f8;
         font-family: "微软雅黑";
     }
 </style>
 <style scoped>
+    .block {
+        position: relative;
+        bottom: 0px;
+        width: 100%;
+        height: 45px;
+    }
     .bottomBar {
         position: fixed;
         bottom: 0px;
