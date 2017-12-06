@@ -2,7 +2,9 @@
    <div>
        <div class="topMenu">我的</div>
        <div class="top">
-           <div @click="changeImg" class="topLeft"></div>
+           <div @click="changeImg" class="topLeft">
+               <img :src="headImg">
+           </div>
            <div class="topRight">
                <h2 class="userName">{{username}}</h2>
                <p class="userId">ID:&nbsp;{{username}}</p>
@@ -21,7 +23,8 @@
         data: function() {
             return {
                 username: '',
-                isShowPopover: false
+                isShowPopover: false,
+                headImg: require('../assets/articleListPic/user/userIcon.png')
             }
         },
         components: {
@@ -52,7 +55,10 @@
                 withCredentials: true 
             })
             .then(function(result) {
-                _this.username = result.data.content.username
+                _this.username = result.data.content.username;
+                if (result.data.content.userhead) {
+                    _this.headImg = result.data.content.userhead;
+                }
             });
         }
     }
@@ -76,9 +82,13 @@
         width: 65px;
         height: 65px;
         border-radius: 50%;
-        background: url('../assets/articleListPic/user/userIcon.png');
         background-size: 100%;
         margin: 30px 20px;
+        overflow: hidden;
+    }
+    .topLeft > img {
+        width: 65px;
+        height: 65px;
     }
     .topRight {
         display: inline-block;

@@ -65,7 +65,7 @@
         color: #ffffff;
         padding: 10px 0;
         background-color: #FABC63;
-        margin-bottom: 10px;
+        padding-bottom: 10px;
     }
     .titleContent {
         width: 100%;

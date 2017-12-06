@@ -38,7 +38,7 @@
             withCredentials: true
         })
     }
-    function getArticleList() {
+    function getArticleList(page) {
         return axios({
             method: 'post',
             url: 'http://localhost:3001/article/articleList',
@@ -88,10 +88,47 @@
                     _this.isLogin = true;
                     _this.username = sessionStorage.getItem('wc_username');
                 }
-                _this.articleList = articleList.data.content;
+                _this.articleList =  _this.articleList.concat(articleList.data.content);
             }));
+        },
+        mounted: function() {
+            let _this = this;
+            let page = 0;
+            let noLast = true;         // 控制反复发送请求
+            let articleSection = document.getElementsByClassName('articleList')[0];
+            articleSection.addEventListener('touchstart', function() {
+                let noBottom = true;       // 控制反复触发touchmove事件
+                let docHeight = document.documentElement.scrollHeight;
+                let screenHeight = document.documentElement.clientHeight;
+                articleSection.addEventListener('touchmove', function() {
+                    let disTop = document.body.scrollTop;
+                    if( disTop + screenHeight >= docHeight ) {
+                        if(noBottom && noLast) {
+                            page = page + 1;
+                            axios({
+                                method: 'post',
+                                url: 'http://localhost:3001/article/articleList',
+                                data: {
+                                    page: page
+                                }
+                            })
+                            .then(function(result) {
+                                if(result.data.status === 2) {
+                                    noLast = false;
+                                }
+                                _this.articleList =  _this.articleList.concat(result.data.content);
+                            })
+                            .catch(function(err) {
+                                console.log('文章加载失败');
+                            })
+                            noBottom = false;
+                        }
+                    }
+                });
+                articleSection.addEventListener('touchend', function() {
+                });
+            },false);
         }
-
     }
 </script>
 <style scoped>

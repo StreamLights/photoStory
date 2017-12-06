@@ -45,7 +45,7 @@
                         imgSrc = ev.target.result;
                         img.src = imgSrc;
                         headImg.style.backgroundImage = "url('"+ imgSrc +"')";
-                        _this.headImg = comPressedImg(img);
+                        _this.headImg = imgSrc;
                         _this.hasHeadImg = true;
                     }
                     reader.readAsDataURL(f);
@@ -93,6 +93,7 @@
         height: 150px;
         margin: 30px auto 50px;
         border: 1px solid #ffffff;
+        background-image: url('../assets/articleListPic/user/userIcon.png');
         background-size: 100%;
     }
     .wrap {
