@@ -2,7 +2,7 @@
     <div class="container">
         <div class="topMenu">
             <div class="leftLogo"></div>
-            <div class="right" v-show="!isLogin"><span class="login" @click="showLogin">登录</span>|<span class="register" @click="showRegister">注册</span></div>
+            <div class="right" v-show="!isLogin"><span @click="goLogin">登录</span></div>
             <div class="rightUserInfo" v-show="isLogin"><span>欢迎！{{username}}</span></div>
         </div>
         <div class="showBanner">
@@ -22,15 +22,11 @@
                 </div>
             </div>
         </div>
-        <login v-show="isShowLogin" @closeLogin="closeLogin"></login>
-        <register v-if="isShowRegister" @closeRegister="closeRegister"></register>
     </div>
 </template>
 <script>
     import axios from 'axios'
     import TurnPhoto from '../components/turnPhoto.vue'
-    import Register from '../components/register.vue'
-    import Login from '../components/login.vue'
     function checkLogin() {
         return axios({
             method: 'post',
@@ -49,40 +45,54 @@
     }
     export default {
         components: {
-            TurnPhoto,
-            Register,
-            Login
+            TurnPhoto
         },
         data () {
             return {
-                isShowRegister: false,            // 控制是否显示注册页面
-                isShowLogin: false,               // 控制是否显示登陆页面
                 isLogin: false,                   // 用于判断用户登陆
                 username: '',
                 articleList: []
             }
         },
         methods: {
-            showRegister: function() {
-                this.isShowRegister = true;
+            arrIndexOf: function(arr, v) {
+                for(var i =0 ; i<arr.length ; i++){
+                 if(arr[i] == v){
+                    return i;
+                  }
+               }
+                return -1;
             },
-            closeRegister: function() {
-                this.isShowRegister = false;
+            addClass: function(obj,className) {
+                if(obj.className == '') {
+                    obj.className = className;
+                } else {
+                    var arrClassName = obj.className.split(' ');
+                    var _index = this.$options.methods.arrIndexOf(arrClassName,className);
+                if(_index == -1) {
+                    obj.className +=' ' + className;
+                    }
+                }
             },
-            showLogin: function() {
-                this.isShowLogin = true;
+            goLogin: function() {
+                this.$router.push({
+                    path: '/userinfo'
+                });
             },
-            closeLogin: function(username) {
-                if (username) {
-                    this.isLogin = true;
-                    this.username = username;
-                }             
-                this.isShowLogin = false;
+            goRegister: function() {
+                
+            }
+        },
+        updated: function() {
+            let _this = this;
+            let centerEle = document.getElementsByClassName('center');
+            for(var i=centerEle.length-1; i>=centerEle.length-3; i--) {
+                _this.addClass(centerEle[i], 'showCenter');
             }
         },
         beforeMount: function() {
             let _this = this;
-             axios.all([checkLogin(),getArticleList()])
+            axios.all([checkLogin(),getArticleList()])
             .then(axios.spread(function(checkResult, articleList) {
                 if(checkResult.data.status === 0){
                     _this.isLogin = true;
@@ -119,7 +129,7 @@
                                 _this.articleList =  _this.articleList.concat(result.data.content);
                             })
                             .catch(function(err) {
-                                console.log('文章加载失败');
+                                console.log('has error: ' + err);
                             })
                             noBottom = false;
                         }
@@ -164,18 +174,12 @@
     .rightUserInfo {
         float: right;
         height: 42px;
-        width: 200px;
+        width: 52%;
         text-align: right;
         margin-right: 15px;
         line-height: 42px;
         font-size: 14px;
         color: #FABC63;
-    }
-    .login {
-        margin-right: 8px;
-    }
-    .register {
-        margin-left: 8px;
     }
     .showBanner {
         margin-top: 45px;
@@ -197,6 +201,11 @@
     .center {
         width: 90%;
         margin: 0 auto 10px;
+        opacity: 0;
+        transition: all 1s;
+    }
+    .showCenter {
+        opacity: 1;
     }
     .center > .artLeft {
         display: inline-block;

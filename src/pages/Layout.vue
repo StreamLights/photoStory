@@ -27,12 +27,12 @@
             },
             goPostArticle() {
                 this.$router.push({
-                    path: 'postArticle'
+                    path: '/postArticle'
                 });
             },
             goUser() {
                 this.$router.push({
-                    path: 'userinfo'
+                    path: '/userinfo'
                 });
             }
         }
@@ -61,7 +61,10 @@
         display: -webkit-flex; /* Safari */
         display: flex;  
         justify-content: space-between;
+        padding-top: 3px;
         background-color: #ffffff;
+
+        border-top: 1px solid #eeeeee;
     }
     .leftItem, .middleItem, .rightItem{
         width: 100px;

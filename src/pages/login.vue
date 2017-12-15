@@ -1,9 +1,12 @@
 <template>
-    <div class="mask">
-        <div class="close" @click="closeMyself"></div>
-        <div class="warmCat"></div>
-        <form class="registerArea">
+    <div>
+        <div class="topMenu">登陆</div>
+        <p class="welcome">欢迎来到暖猫故事！</p>
+        <form class="loginArea">
             <span class="tag">用户名：</span>
+            <transition name="fade">
+                <div v-if="isShowMes" class="showMessage">{{regMes}}</div>
+            </transition>
             <div class="wrapText">
                 <input type="text" class="username" v-model="username">
             </div>
@@ -11,11 +14,9 @@
             <div class="wrapText">
                 <input type="password" class="password" v-model="password">
             </div>
-            <div class="register" @click="register">注册</div>   
+            <div class="goRegister" @click="goRegister"><span>注册账号</span></div>
+            <div class="login" @click="login">登陆</div>   
         </form>
-        <transition name="fade">
-            <div v-if="isShowMes" class="showMessage">{{regMes}}</div>
-        </transition>
     </div>
 </template>
 <script>
@@ -30,18 +31,25 @@
             }
         },
         methods: {
-            register: function() {
+            goRegister: function() {
+                this.$router.replace({
+                    path: 'register'
+                });
+            },
+            login: function() {
                 let _this = this;
                 axios({
                     method: 'post',
-                    url: '/api/user/register',
+                    url: 'http://localhost:3001/user/login',
                     data: {
                         username: this.username,
                         password: this.password
-                    }
+                    },
+                    withCredentials: true           // 设置withCredentials,否则即使服务器同意发送Cookie，浏览器也不会发送。或者，服务器要求设置Cookie，浏览器也不会处理。
                 })
                 .then(function(response) {
-                    if(response.data && response.data.status === 1){
+                    // 登陆失败
+                    if(response.data && response.data.status === 1) {
                         _this.isShowMes = true;
                         setTimeout(function() {
                             _this.isShowMes = false;
@@ -49,55 +57,47 @@
                         _this.regMes = response.data.msg;
                         return;
                     }
-                    this.$emit('closeRegister');
+                    // 登陆成功
+                    sessionStorage.setItem('wc_username', _this.username);
+                    _this.$emit('closeLogin', response.data.status);
                 })
                 .catch(function(err) {
                     console.log(err);
                 });
-            },
-            closeMyself: function() {
-                this.$emit('closeRegister');
             }
         }
     }
 </script>
 <style scoped>
-    .mask {
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,.6);
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 99999;
+    .topMenu {
+        height: 45px;
+        background-color: #ffffff;
+        text-align: center;
+        line-height: 45px;
+        font-size: 16px;
+        color: #FABC63;
+        letter-spacing: 1px;
+        border-bottom: 1px solid #eeeeee;
     }
-    .warmCat {
-        width: 190px;
-        height: 190px;
-        margin: 7% auto 0;
-        background: url('../assets/register/cat.svg');
-        background-size: 100% 100%;
+    .welcome {
+        width: 80%;
+        color: #FABC63;
+        font-size: 30px;
+        margin: 50px auto 0px;
     }
-    .close {
-        width: 30px;
-        height: 30px;
-        margin: 30px 0 0 80%;
-        background: url('../assets/close.png');
-        background-size: 100% 100%;
-    }
-    .registerArea {
-        margin-top: 50px;
+    .loginArea {
+        margin-top: 20px;
     }
     .tag {
-        display: block;
-        color: #ffffff;
+        display: inline-block;
+        color: #FABC63;
         font-size: 12px;
         margin: 20px 0 0 10%;
     }
     .wrapText {
         width: 80%;
         height: 35px;
-        border: 1px solid #ffffff;
+        border: 1px solid #FABC63;
         margin: 0 auto;
         border-radius: 10px;
         margin-top:5px;
@@ -106,12 +106,12 @@
         z-index: 999999;
         background: transparent;
         outline: none;
-        color: #ffffff;
+        color: #FABC63;
         margin: 7px 0 0 10px;
         border: transparent;
         width: 95%;
     }
-    .register {    
+    .login {    
         width: 40%;
         height: 35px;
         background: #FABC63;
@@ -120,20 +120,23 @@
         font-weight: 500;
         line-height: 35px;
         text-align: center;
-        margin: 30px auto;
+        margin: 10px auto;
+        color: #ffffff;
     }
     .showMessage {
-        position: absolute;
-        top: 300px;
-        left: calc(50% - 75px);
+        display: inline-block;
         width: 150px;
-        height: 25px;
-        border: 1px solid #ffffff;
-        color: #ffffff;
-        border-radius: 10px;
+        color: #FABC63;
         font-size: 12px;
-        line-height: 25px;
+        line-height: 12px;
         text-align: center;
+    }
+    .goRegister {
+        font-size: 12px;
+        color: #FABC63;
+        width: 80%;
+        text-align: right;
+        margin: 10px auto 0px;
     }
     .fade-enter,  .fade-leave-to {
         opacity: 0;

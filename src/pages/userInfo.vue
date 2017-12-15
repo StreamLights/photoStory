@@ -1,19 +1,22 @@
 <template>
    <div>
-       <div class="topMenu">我的</div>
-       <div class="top">
-           <div @click="changeImg" class="topLeft">
-               <img :src="headImg">
+       <div v-show="isShowInfo" class="container">
+           <div class="topMenu">我的</div>
+           <div class="top">
+               <div @click="changeImg" class="topLeft">
+                   <img :src="headImg">
+               </div>
+               <div class="topRight">
+                   <h2 class="userName">{{username}}</h2>
+                   <p class="userId">ID:&nbsp;{{username}}</p>
+                   <i class="light"></i>
+                   <p class="fans">关注&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;被关注&nbsp;0</p>
+               </div>
            </div>
-           <div class="topRight">
-               <h2 class="userName">{{username}}</h2>
-               <p class="userId">ID:&nbsp;{{username}}</p>
-               <i class="light"></i>
-               <p class="fans">关注&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;被关注&nbsp;0</p>
-           </div>
+           <div class="menuInfo" @click="goExit">退出当前账号</div>
        </div>
-       <div class="menuInfo" @click="goExit">退出当前账号</div>
        <popover v-if="isShowPopover" @closePopover="closePopover"></popover>
+       <router-view></router-view>
    </div>
 </template>
 <script>
@@ -24,7 +27,8 @@
             return {
                 username: '',
                 isShowPopover: false,
-                headImg: require('../assets/articleListPic/user/userIcon.png')
+                isShowInfo: false,
+                headImg: require('../assets/articleListPic/user/userIcon.png'),
             }
         },
         components: {
@@ -38,12 +42,15 @@
                 this.isShowPopover = false;
             },
             goExit: function() {
+                let _this = this;
                 axios({
                     method: 'post',
                     url: 'http://localhost:3001/user/logout',
                     withCredentials: true 
                 }).then(function() {
-                    console.log('退出成功');
+                    _this.$router.push({
+                        path: '/'
+                    });
                 });   
             }
         },
@@ -52,9 +59,18 @@
             axios({
                 method: 'post',
                 url: 'http://localhost:3001/user/getUserInfo',
-                withCredentials: true 
+                withCredentials: true
             })
             .then(function(result) {
+                // 用户未登录
+                if(result.data.status && result.data.status === 1) {
+                    _this.$router.push({
+                        path: 'userinfo/login'
+                    });
+                    return;
+                }
+                // 用户已登录
+                _this.isShowInfo = true;
                 _this.username = result.data.content.username;
                 if (result.data.content.userhead) {
                     _this.headImg = result.data.content.userhead;

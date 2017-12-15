@@ -4,11 +4,12 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: './src/main.js'
+        app: './src/main.js',
+        common: ['vue']
     },
     output: {
         path: path.join(__dirname, '/dist/assets'),
-        filename: '[name].bunle.js'
+        filename: '[name].[hash].js'
     },
     resolve: {
         alias: {

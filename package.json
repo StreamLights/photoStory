@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "server": "node server/service/index.js"
+    "dev": "node build/dev-server.js"
   },
   "author": "sliving",
   "license": "ISC",
@@ -13,7 +12,6 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.24.1",
     "css-loader": "^0.28.7",
     "file-loader": "^1.1.5",
     "html-webpack-plugin": "^2.30.1",
@@ -28,9 +26,8 @@
     "axios": "^0.17.1",
     "http-proxy-middleware": "^0.17.4",
     "koa": "^2.4.1",
-    "simplemde": "^1.11.2",
     "vue": "^2.5.3",
     "vue-router": "^3.0.1",
-    "vue-simplemde": "^0.4.6"
+    "wangeditor": "^3.0.15"
   }
 }
