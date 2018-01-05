@@ -60,6 +60,9 @@
                     // 登陆成功
                     sessionStorage.setItem('wc_username', _this.username);
                     _this.$emit('closeLogin', response.data.status);
+                    _this.$router.push({
+                        path: '/'
+                    });
                 })
                 .catch(function(err) {
                     console.log(err);

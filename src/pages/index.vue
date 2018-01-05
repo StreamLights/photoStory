@@ -9,8 +9,8 @@
             <turn-photo></turn-photo>
         </div>
         <div class="articleList">
-            <div v-for="item in articleList" class="content">
-                <div class="center">
+            <div class="content" v-for="item in articleList">
+                <div class="center" @click="scanArticle(item._id)">
                     <div class="artLeft">
                         <h2>{{item.title}}</h2>
                         <p>{{item.content}}</p>
@@ -20,7 +20,7 @@
                         <img src="../assets/articleListPic/article/hangzhou.jpg" alt="杭州">
                     </div>
                 </div>
-            </div>
+            </div>  
         </div>
     </div>
 </template>
@@ -74,6 +74,13 @@
                     }
                 }
             },
+            scanArticle: function(_id) {
+                let articleId = _id;
+                this.$router.push({
+                    name: 'article',
+                    params: { articleId }
+                });
+            },
             goLogin: function() {
                 this.$router.push({
                     path: '/userinfo'
@@ -84,11 +91,15 @@
             }
         },
         updated: function() {
-            let _this = this;
-            let centerEle = document.getElementsByClassName('center');
-            for(var i=centerEle.length-1; i>=centerEle.length-3; i--) {
-                _this.addClass(centerEle[i], 'showCenter');
-            }
+            // let _this = this;
+            // let centerEle = document.getElementsByClassName('center');
+            // if(centerEle.length) {
+            //     return;
+            // }
+            // for(var i=centerEle.length-1; i>=centerEle.length-3; i--) {
+            //     _this.addClass(centerEle[i], 'showCenter');
+            // }
+            console.log('暂时注释');
         },
         beforeMount: function() {
             let _this = this;
@@ -98,7 +109,9 @@
                     _this.isLogin = true;
                     _this.username = sessionStorage.getItem('wc_username');
                 }
-                _this.articleList =  _this.articleList.concat(articleList.data.content);
+                if(articleList.data.content.length != 0) {
+                    _this.articleList =  _this.articleList.concat(articleList.data.content);
+                }
             }));
         },
         mounted: function() {
@@ -201,7 +214,6 @@
     .center {
         width: 90%;
         margin: 0 auto 10px;
-        opacity: 0;
         transition: all 1s;
     }
     .showCenter {

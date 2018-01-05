@@ -16,7 +16,6 @@
 <script>
     import axios from 'axios'
     import editor from 'wangeditor'
-    let simplemde;
     export default {
         data: function() {
             return {
@@ -35,7 +34,7 @@
                 let _this = this;
                 axios({
                     method: 'post',
-                    url: 'p0ms255om.bkt.clouddn.com',
+                    url: 'http://localhost:3001/article/post',
                     data: {
                         title: _this.titleContent,
                         content: _this.editorContent
@@ -48,7 +47,6 @@
                 .catch(function(err) {
                     console.log(err);
                 })
-                console.log(this.editorContent);
             }
         },
         beforeMount: function() {
@@ -75,10 +73,8 @@
                 'underline',
                 'link',
                 'emotion',
-                'image',
                 'undo'
             ];
-            editorArea.customConfig.uploadImgShowBase64 = true;   // 使用 base64 保存图片
             editorArea.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;   // 上传图片大小限制为 3m
             editorArea.customConfig.uploadImgMaxLength = 5;  // 最大上传图片数量5张
             editorArea.customConfig.withCredentials = true;  // 解决跨域传输
@@ -87,24 +83,7 @@
                 this.editorContent = html;
             }
             editorArea.create();
-            function uploadInit() {
-                // 获取相关 DOM 节点的 ID
-                var btnId = editorArea.imgMenuId;
-                var containerId = editorArea.toolbarElemId;
-                var textElemId = editorArea.textElemId;
-                var uploader = Qiniu.uploader({
-                    runtimes: 'html5,flash,html4',      // 上传模式,依次退化
-                    browse_button: btnId,               // 上传选择的点选按钮，**必需**
-                    domain: 'p0ms255om.bkt.clouddn.com',     // bucket 域名，下载资源时用到，如：'http://xxx.bkt.clouddn.com/' **必需**
-                    uptoken: "0MLvWPnyya1WtPnXFy9KLyGHyFPNdZceomL",
-                    container: containerId,             // 上传区域 DOM ID，默认是 browser_button 的父元素，
-                    max_file_size: '100mb',             // 最大文件体积限制
-                    max_retries: 3,                     // 上传失败最大重试次数
-                    drop_element: textElemId,           //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
-                    chunk_size: '4mb',                  // 分块上传时，每块的体积
-                    auto_start: true,                   // 选择文件后自动上传，若关闭需要自己绑定事件触发上传,
-                });
-            }
+            editorArea.txt.html('<p>说点想说的吧~</p>');
         }
     }
 </script>

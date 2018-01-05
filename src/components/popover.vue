@@ -4,71 +4,46 @@
         <div class="showHead"></div>
         <div class="wrap">
             上传图片
-            <input type="file" class="chooseImg" @change="change" accept="image/jpeg, image/jpg">
+            <input type="file" class="btn" @change="upload($event)">
         </div>
-        <div class="submit" @click="submit">确认</div>
+        <div class="wrap">
+            确认
+            <button class="btn" @click="submit($event)"></button>
+        </div>
     </div>
 </template>
 <script>
-    import axios from 'axios'
-    // 利用canvas进行图片压缩
-    function comPressedImg(image) {
-        let compressedImage;
-        let canvas = document.createElement('canvas');
-        let dstWidth = 150, dstHeight = 150;
-        canvas.getContext("2d").drawImage(image, dstWidth, dstHeight);   // 这里传入img元素对象
-        compressedImage = canvas.toDataURL("image/jpg", 0.7);
-        return compressedImage;
-    }
     export default {
         data: function() {
             return {
-                headImg: '',
-                hasHeadImg: false
+                imgSrc: ''
             }
         },
         methods: {
             closeMyself: function() {
                 this.$emit('closePopover');
-            },
-            change: function(ev) {
-                let _this = this;
-                let img = document.createElement('img');
-                let imgSrc = '';
-                for(var i=0, f; f=ev.target.files[i]; i++) {
-                    if(f.type.indexOf('image') !==0) {
-                        continue;
+            },  
+            upload: function(event) {
+                let windowURL = window.URL || window.webkitURL;
+                let img = this.$el.querySelector('.showHead');
+                this.file = event.target.files[0];
+                this.src = windowURL.createObjectURL(event.target.files[0]);
+                img.style.backgroundImage = 'url(' + this.src + ')';
+            },   
+            submit: function(event) {
+                event.preventDefault();//取消默认行为
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'  //以表单传数据的格式来传递fromdata
                     }
-                    let reader = new FileReader();
-                    reader.onload = function(ev) {
-                        let headImg = document.getElementsByClassName('showHead')[0];
-                        imgSrc = ev.target.result;
-                        img.src = imgSrc;
-                        headImg.style.backgroundImage = "url('"+ imgSrc +"')";
-                        _this.headImg = imgSrc;
-                        _this.hasHeadImg = true;
-                    }
-                    reader.readAsDataURL(f);
-                }
-            },
-            submit: function() {
-                let _this = this;
-                if(!this.hasHeadImg) {
-                    return;
-                }
-                axios({
-                    method: 'post',
-                    url: 'http://localhost:3001/user/postHeadImg',
-                    withCredentials: true,
-                    data: {
-                        headImg: _this.headImg
-                    }
-                }).then(function(result) {
-                    if(result.status == 0) {
-                        _this.$emit('closePopover');
-                    }
-                });   
-            }
+                };
+                let formdata = new FormData();
+                formdata.append('file', this.file);              //将文件存入formdata
+                this.$http.post('http://localhost:3001/user/postHeadImg', formdata, config)
+                .then((res) => {
+                }).catch((error) =>{
+                });
+            }      
         }
     }
 </script>
@@ -105,9 +80,9 @@
         text-align: center;
         background-color: #FABC63;
         border-radius: 20px;
-        margin: 0 auto;
+        margin: 0 auto 20px;
     }
-    .chooseImg {
+    .btn {
         position: absolute;
         top: 0;
         left: 0;
@@ -115,15 +90,5 @@
         opacity: 0;
         height: 40px;
         width: 100%;
-    }
-    .submit {
-        height: 40px;
-        width: 50%;
-        color: #ffffff;
-        line-height: 40px;
-        text-align: center;
-        background-color: #FABC63;
-        border-radius: 20px;
-        margin: 30px auto;
     }
 </style>
